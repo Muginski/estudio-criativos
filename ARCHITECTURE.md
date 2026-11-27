@@ -1,6 +1,6 @@
 # Arquitetura — Estúdio de Criativos
 
-> MVP entregue 2026-11-27. Objetivo: app funcionando hoje; só fica pendente o que exige dinheiro/conta (ver `PENDENCIAS-PAGO.md`).
+> MVP entregue 2026-11-27, publicado em https://muginski.github.io/estudio-criativos/ (GitHub Pages). Objetivo: app funcionando hoje; só fica pendente o que exige dinheiro/conta (ver `PENDENCIAS-PAGO.md`). Foco primário: **nicho hot** (discrição como argumento central de venda).
 
 ## Decisão central: 100% client-side no MVP
 Todo processamento roda no navegador do usuário (Canvas + WASM). Consequências:
