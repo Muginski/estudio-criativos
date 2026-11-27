@@ -55,14 +55,24 @@
       "modelo": "sonnet",
       "risco": null,
       "permite_testes": false,
-      "estado": "pendente",
-      "passes": false,
+      "estado": "aprovada",
+      "passes": true,
       "bloqueios": 0,
-      "tentativas": [],
-      "histo": [
-        "2026-11-27: plano definiu a verificação"
+      "tentativas": [
+        {
+          "n": 1,
+          "em": "2026-11-27T18:32:49.999Z",
+          "modelo": "sonnet",
+          "tipo": "ok",
+          "resultado": "aprovada",
+          "custoUsd": 0.0868872
+        }
       ],
-      "custo_usd": 0,
+      "histo": [
+        "2026-11-27: plano definiu a verificação",
+        "2026-11-27: aprovada (sonnet, US$ 0.0869)"
+      ],
+      "custo_usd": 0.0868872,
       "base_vermelha": {
         "em": "2026-11-27T18:20:27.317Z",
         "sha": "a17ff0646c7b57098948815923ec892274e0928d",
