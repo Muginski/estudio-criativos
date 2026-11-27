@@ -86,7 +86,7 @@ export function initOcr(root, { toast, plan, renderChip }) {
     input.value = '';
   };
 
-  $('#oc-unlock').onclick = () => document.querySelector('.tab-pro')?.click();
+  $('#oc-unlock').onclick = () => document.getElementById('sec-pro')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   runBtn.onclick = async () => {
     if (!job || busy) return;

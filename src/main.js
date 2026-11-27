@@ -34,7 +34,8 @@ function renderChip() {
 }
 window.__ecRenderChip = renderChip; // usado pelos tools após mudar estado
 
-// ---------- montagem de tools ----------
+// ---------- montagem: tudo em UMA PÁGINA (sem abas) ----------
+const ORDER = ['resizer', 'watermark', 'ocr', 'fonts', 'pro'];
 const TOOLS = {
   resizer: initResizer,
   watermark: initWatermark,
@@ -43,25 +44,23 @@ const TOOLS = {
   pro: initPro,
 };
 const api = { toast, plan, renderChip };
-let current = null;
-let currentTab = 'resizer';
+const view = document.getElementById('view');
 
-function mount(tab) {
-  const view = document.getElementById('view');
-  if (current) current.destroy();
-  view.innerHTML = '';
-  currentTab = tab;
-  current = TOOLS[tab](view, api) || {};
-  window.dispatchEvent(new CustomEvent('ec:tab', { detail: tab }));
+for (const name of ORDER) {
+  const wrap = document.createElement('section');
+  wrap.className = 'tool';
+  wrap.id = 'sec-' + name;
+  view.appendChild(wrap);
+  TOOLS[name](wrap, api) || {};
 }
 
-// ---------- navegação ----------
-document.getElementById('tabs').addEventListener('click', (e) => {
-  const btn = e.target.closest('.tab');
-  if (!btn) return;
-  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-active', t === btn));
-  mount(btn.dataset.tab);
-});
+// deep link por hash (#resizer, #watermark, #ocr, #fonts, #pro)
+function scrollToHash() {
+  const t = (location.hash || '').slice(1);
+  const el = t && document.getElementById('sec-' + t);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.addEventListener('hashchange', scrollToHash);
+window.addEventListener('load', scrollToHash);
 
 renderChip();
-mount('resizer');

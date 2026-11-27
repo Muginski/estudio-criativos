@@ -45,10 +45,11 @@ export function initPro(root, { toast, renderChip }) {
       <h2>Estúdio Pro <span class="badge-pro">R$ ${PRICE.replace('.', ',')} / 30 dias</span></h2>
       <p class="sub">Pagamento único via Pix. Sem mensalidade escondida, sem recorrência automática — renova só se quiser, na mão.</p>
       <ul class="ticks">
+        <li><b>Discrição total</b>: tudo roda no seu aparelho — nada é enviado a servidor nenhum</li>
         <li>Print → Texto <b>ilimitado</b> (grátis é 5/dia)</li>
         <li>Lote: edite e baixe várias imagens de uma vez</li>
-        <li>Ferramentas de vídeo da fase 2 (legendas automáticas e corte) incluídas</li>
-        <li>Suporte direto pelo WhatsApp pra duvidas de criativo</li>
+        <li>Ferramentas de vídeo (legendas automáticas e corte) incluídas</li>
+        <li>Suporte direto pelo WhatsApp pra dúvidas de criativo</li>
       </ul>
       <div class="row" style="margin-top:18px">
         ${until ? `<div style="color:var(--ok);font-weight:700">✔ Você está no Pro até ${until}</div>` : ''}
