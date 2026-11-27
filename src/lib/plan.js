@@ -34,9 +34,9 @@ export function todayUsage() {
 
 /** Registra 1 uso de print. Retorna true se coube no limite (ou Pro) */
 export function bumpPrint() {
-  if (isPro()) { S.usage.prints += 1; save(S); return true; }
+  if (isPro()) { S.usage.prints += 1; save(S); syncUsage(); return true; }
   if (S.usage.prints >= FREE_DAILY.prints) return false;
-  S.usage.prints += 1; save(S);
+  S.usage.prints += 1; save(S); syncUsage();
   return true;
 }
 
@@ -50,3 +50,52 @@ export function activatePro(code) {
 }
 
 export function refreshState() { S = load(); }
+
+// ---------- Espelho Supabase free (opcional; ativo se VITE_SUPABASE_URL/ANON_KEY) ----------
+const SB_URL = import.meta.env?.VITE_SUPABASE_URL;
+const SB_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+const sbHeaders = () => ({ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' });
+
+function deviceId() {
+  let id = localStorage.getItem('ec_device_v1');
+  if (!id) { id = crypto.randomUUID(); localStorage.setItem('ec_device_v1', id); }
+  return id;
+}
+
+/** Espelha o uso de hoje no Supabase (upsert). Falha silenciosa. */
+export async function syncUsage() {
+  if (!SB_URL || !SB_KEY) return;
+  try {
+    await fetch(`${SB_URL}/rest/v1/usage?on_conflict=device_id,day`, {
+      method: 'POST',
+      headers: { ...sbHeaders(), Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify({ device_id: deviceId(), day: S.usage.date, prints: S.usage.prints }),
+    });
+  } catch { /* offline */ }
+}
+
+/** Restaura o maior uso do dia vindo do servidor (bloqueia reset de localStorage). */
+export async function restoreUsage() {
+  if (!SB_URL || !SB_KEY) return;
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/usage?device_id=eq.${encodeURIComponent(deviceId())}&day=eq.${S.usage.date}&select=prints`, { headers: sbHeaders() });
+    const [row] = await r.json();
+    if (row && row.prints > S.usage.prints) { S.usage.prints = row.prints; save(S); }
+  } catch { /* offline */ }
+}
+
+/** Ativa Pro via RPC activate(codigo) no Supabase. */
+export async function activateRemote(code) {
+  const c = String(code || '').trim().toUpperCase();
+  if (c.length < 6) return { ok: false, err: 'Código muito curto.' };
+  if (!SB_URL || !SB_KEY) return activatePro(c);
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rpc/activate`, {
+      method: 'POST', headers: sbHeaders(),
+      body: JSON.stringify({ codigo: c, p_device: deviceId() }),
+    });
+    if (!r.ok) return { ok: false, err: 'Código inválido ou já usado.' };
+    S.pro = { active: true, until: Date.parse(await r.json()) }; save(S);
+    return { ok: true };
+  } catch { return { ok: false, err: 'Sem conexão.' }; }
+}

@@ -34,3 +34,6 @@ Dependências: `vite` (build) + `tesseract.js` (OCR). Nada além disso.
 
 ## Fase 2 (quando houver dinheiro/VPS)
 Vídeo: legendas automáticas (Whisper) + corte — fila server-side. Limites RH de referência: 180 s/vídeo, 33 MB.
+
+## Fase 2: legenda automática (server/)
+Whisper server-side (`server/whisper.mjs`, provedor via WHISPER_PROVIDER=openai|local) com fila (`server/caption-queue.mjs`). Decisão de custo VPS vs API pendente.
