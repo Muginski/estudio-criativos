@@ -1,0 +1,18 @@
+{
+  "name": "estudio-criativos",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Ferramentas de criativo para quem roda tráfego pago — 100% client-side no MVP",
+  "scripts": {
+    "dev": "vite --port 5199",
+    "build": "vite build",
+    "preview": "vite preview --port 5199"
+  },
+  "dependencies": {
+    "tesseract.js": "^6.0.1"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  }
+}

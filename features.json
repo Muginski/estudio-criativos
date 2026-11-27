@@ -1,0 +1,29 @@
+{
+  "_leia-me": "Fichas para o loop maratona. f1-f6 = MVP entregue 2026-11-27 (feitas inline por Drael, commit inicial). As próximas rodam aqui.",
+  "features": [
+    {
+      "id": "f7-lote-pro",
+      "titulo": "Lote no Redimensionar: seleção multi-formato por imagem + zip de download",
+      "verificacoes": [
+        "npm run build",
+        "node tests/lote.mjs"
+      ]
+    },
+    {
+      "id": "f8-state-backend-free",
+      "titulo": "Espelhar ec_state_v1 em Supabase free (tabelas usage + activations, RLS anon write p/ prints, RPC activate(codigo)) — bloqueio de reset de localStorage",
+      "verificacoes": [
+        "npm run build",
+        "node tests/state-sync.mjs"
+      ]
+    },
+    {
+      "id": "f9-video-legenda",
+      "titulo": "Fase 2: legenda automática de vídeo (Whisper server-side com fila) — depende de decisão de custo (VPS/API)",
+      "verificacoes": [
+        "npm run build",
+        "node tests/legendas.mjs"
+      ]
+    }
+  ]
+}
