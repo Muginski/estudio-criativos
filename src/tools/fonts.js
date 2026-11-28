@@ -37,6 +37,7 @@ const STYLES = [
   { id: 'underline', n: 'Sublinhado' },
   { id: 'strike', n: 'Riscado' },
   { id: 'overline', n: 'Superlinhado' },
+  { id: 'cloak', n: 'Cloaker invisível ✦' },
 ];
 
 function mapByTable(s, m) {
@@ -54,7 +55,23 @@ function mapByTable(s, m) {
 
 const COMBINE = { underline: '\u0332', strike: '\u0336', overline: '\u0305' };
 
-function convert(text, style) {
+// Cloaker de Texto: insere marcadores de zero-largura entre os caracteres.
+// Visual idêntico, bytes diferentes → o criativo muda no hash da rede.
+// Semente por clique = cada geração sai diferente.
+function cloakInvisible(text, seed) {
+  let h = 2166136261 >>> 0;
+  const feed = (s) => { for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } };
+  feed(text); feed(String(seed || ''));
+  let rnd = h || 1, out = '';
+  for (const ch of [...text]) {
+    rnd = (Math.imul(rnd ^ (ch.codePointAt(0) + 0x9e3779b9), 16777619)) >>> 0;
+    out += ch;
+    if (ch !== ' ') out += rnd % 3 === 0 ? '\u200d' : '\u200b'; // joiner ou space zerados
+  }
+  return out;
+}
+
+function convert(text, style, seed) {
   if (style.m) return mapByTable(text, style.m);
   switch (style.id) {
     case 'circled':
@@ -80,6 +97,7 @@ function convert(text, style) {
         return c >= 0x21 && c <= 0x7e ? String.fromCodePoint(c + 0xfe00) : ch;
       }).join('');
     default: {
+      if (style.id === 'cloak') return cloakInvisible(text, seed);
       const cm = COMBINE[style.id];
       return cm ? [...text].map((ch) => (ch === ' ' ? ch : ch + cm)).join('') : text;
     }
@@ -91,8 +109,8 @@ export function initFonts(root, { toast }) {
   <section class="card">
     <div class="row" style="justify-content:space-between">
       <div>
-        <h2>Fontes para copy <span class="badge-free">GRÁTIS · ILIMITADO</span></h2>
-        <p class="sub">Cole sua copy, toque num estilo e cole direto na legenda — o texto vira caracteres Unicode (funciona em qualquer rede social).</p>
+        <h2>Fontes &amp; Cloaker de Texto <span class="badge-free">GRÁTIS · ILIMITADO</span></h2>
+        <p class="sub">Cole sua copy e toque num estilo — 18 estilos Unicode mais o cloaker invisível (o texto fica visualmente igual com bytes diferentes, cada clique gera variação nova). Cola direto na legenda.</p>
       </div>
     </div>
     <label class="fld grow"><span> Sua copy</span><textarea id="ft-in" placeholder="Ex.: O método que dobrou minha audiência em 14 dias…" style="min-height:110px"></textarea></label>
@@ -125,9 +143,10 @@ export function initFonts(root, { toast }) {
       stylesEl.querySelectorAll('.opt').forEach((o) => o.classList.toggle('is-on', o === b));
       const src = inp.value.trim();
       if (!src) { toast('Cole sua copy primeiro', 'err'); return; }
-      outTa.value = convert(src, st);
+      outTa.value = convert(src, st, st.id === 'cloak' ? Date.now().toString(36) + Math.random().toString(36).slice(2, 6) : '');
       listBox.textContent = '';
       outWrap.hidden = false;
+      if (st.id === 'cloak') toast('Visual idêntico, bytes únicos — cada toque gera variação nova', 'ok');
     };
     stylesEl.appendChild(b);
   }

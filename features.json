@@ -1,5 +1,5 @@
 {
-  "_leia-me": "Fichas para o loop maratona. f1-f6 = MVP entregue 2026-11-27 (feitas inline por Drael, commit inicial). As próximas rodam aqui.",
+  "_leia-me": "Fichas para o loop maratona. f1-f6 = MVP entregue 2026-11-27; f7-f9 = lote/state/Whisper; f10 = suíte vídeo-first v2 entregue 2026-11-28. As próximas rodam aqui.",
   "features": [
     {
       "id": "f7-lote-pro",
@@ -23,6 +23,14 @@
       "verificacoes": [
         "npm run build",
         "node tests/legendas.mjs"
+      ]
+    },
+    {
+      "id": "f10-suite-video",
+      "titulo": "v2 — Suíte vídeo-first completa (10 tools: cloaker, limpar, legendas, comprimir, áudio, resize, corte, marca, preview, lote) + home em grade + cloaker de texto grátis + portão PRO",
+      "verificacoes": [
+        "npm run build",
+        "node tests/vlib.mjs"
       ]
     }
   ]

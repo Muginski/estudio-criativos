@@ -37,3 +37,29 @@ Vídeo: legendas automáticas (Whisper) + corte — fila server-side. Limites RH
 
 ## Fase 2: legenda automática (server/)
 Whisper server-side (`server/whisper.mjs`, provedor via WHISPER_PROVIDER=openai|local) com fila (`server/caption-queue.mjs`). Decisão de custo VPS vs API pendente.
+
+## v2 — Suíte vídeo-first (2026-11-28)
+Mineração do rateiohot.com/ferramentas (literal `window.__RH_TL_TOOLS` com as 15 tools + widgets rh-tools/rh-tl-caps) definiu o mapa. App virou **home em grade de ferramentas** (clique abre a tool, deep link por hash) + portão PRO.
+
+| Ferramenta RH | Nossa | Engine no cliente |
+|---|---|---|
+| print→texto | Print → Texto (OCR) | tesseract.js WASM (grátis 5/dia) |
+| fontes + texto (cloaker) | Fontes & Cloaker de Texto | mapa Unicode + marcadores zero-largura |
+| redimensionar (img) | Redimensionar imagem | canvas |
+| marca (img) | Legenda & marca (imagem) | canvas |
+| variacoes | Cloaker de criativo | canvas + captureStream + MediaRecorder |
+| limpar | Limpar metadados (img/vídeo/áudio) | re-draw canvas / re-encode / decode→WAV |
+| legendas | Legendas | burn de SRT; Whisper via VITE_WHISPER_URL (server/) |
+| comprimir | Comprimir vídeo | re-encode com bitrate controlado + comparativo |
+| extrair + audio | Áudio (extrair/mixar) | WebAudio → WAV / trilha mixada |
+| redimensionar (vídeo) | Redimensionar vídeo | targetSize + cover/fit c/ fundo borrado |
+| lote | Lote | receita única × até 5 vídeos → ZIP no cliente |
+| cortar | Cortar vídeo | start/end |
+| marca (vídeo) | Marca em vídeo | texto/tilé queimado + prévia ao vivo por seek |
+| previa | Gerador de preview | região blur/pixelada, opcional só até Xs |
+| — | Plano Pro | Pix EMV + código de ativação |
+
+- Todo o processamento de vídeo vive em `src/lib/video.js` — pipeline único (canvas + captureStream + MediaRecorder + WebAudio); cada tool é só um config dele. Limites espelham o RH: 5 arquivos / 33 MB / 180 s (`VIDEO_LIMITS`).
+- Decisão de preço: lado imagem continua grátis (já estava público como grátis desde o MVP); **suíte inteira de vídeo = Pro** (R$ 29,90/30 dias, renovação manual). Portão = classes `.locked`/`.gate` aplicadas em main.js e reavaliadas em cada ativação.
+- Diferencial mantido vs RH: eles mandam o arquivo pro servidor FFmpeg (TTL 24 h); aqui nada sai do aparelho.
+- Prova: `npm run build` + `node tests/vlib.mjs` (parser de legendas, targetSize, ZIP).
